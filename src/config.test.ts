@@ -22,6 +22,7 @@ describe("share slice config", () => {
         user: false,
         assistant: "yes",
         reasoning: true,
+        patchViewer: "yes",
         systemContext: "everything",
         filterMode: "wat",
       },
@@ -29,14 +30,16 @@ describe("share slice config", () => {
     expect(parsed.config.defaults.user).toBeFalse();
     expect(parsed.config.defaults.assistant).toBeTrue();
     expect(parsed.config.defaults.reasoning).toBeTrue();
+    expect(parsed.config.defaults.patchViewer).toBeTrue();
     expect(parsed.config.defaults.systemContext).toBe("none");
     expect(parsed.config.defaults.filterMode).toBe("user-assistant-only");
-    expect(parsed.warnings).toHaveLength(3);
+    expect(parsed.warnings).toHaveLength(4);
   });
 
-  test("accepts the user-and-assistant-only filter", () => {
-    const parsed = parseConfig({ defaults: { filterMode: "user-assistant-only" } });
+  test("accepts the user-and-assistant-only filter and disabled viewer patch", () => {
+    const parsed = parseConfig({ defaults: { filterMode: "user-assistant-only", patchViewer: false } });
     expect(parsed.config.defaults.filterMode).toBe("user-assistant-only");
+    expect(parsed.config.defaults.patchViewer).toBeFalse();
     expect(parsed.warnings).toEqual([]);
   });
 

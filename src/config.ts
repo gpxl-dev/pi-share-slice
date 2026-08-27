@@ -17,6 +17,7 @@ export interface ShareSliceDefaults {
   reasoning: boolean;
   tool: boolean;
   context: boolean;
+  patchViewer: boolean;
   systemContext: SystemMode;
   filterMode: FilterMode;
 }
@@ -32,6 +33,7 @@ export const DEFAULT_CONFIG: ShareSliceConfig = {
     reasoning: false,
     tool: false,
     context: false,
+    patchViewer: true,
     systemContext: "none",
     filterMode: "user-assistant-only",
   },
@@ -71,6 +73,12 @@ export function parseConfig(value: unknown): { config: ShareSliceConfig; warning
     if (raw === undefined) continue;
     if (typeof raw === "boolean") defaults[category] = raw;
     else warnings.push(`defaults.${category} must be true or false; using ${String(defaults[category])}.`);
+  }
+
+  const patchViewer = record.patchViewer;
+  if (patchViewer !== undefined) {
+    if (typeof patchViewer === "boolean") defaults.patchViewer = patchViewer;
+    else warnings.push(`defaults.patchViewer must be true or false; using ${String(defaults.patchViewer)}.`);
   }
 
   const systemContext = record.systemContext;

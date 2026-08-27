@@ -2,7 +2,7 @@
 
 `pi-share-slice` is a dependency-free runtime extension for [Pi](https://pi.dev). It lets you select part of the active conversation branch and share it as a secret GitHub Gist through Pi's built-in HTML session viewer.
 
-The extension does **not** convert sessions to Markdown or ship a copy of Pi's viewer. It calls the HTML exporter from the installed Pi package, so shared sessions keep Pi's normal theme, tree, message, thinking, and tool presentation.
+The extension does **not** convert sessions to Markdown or ship a copy of Pi's viewer. It calls the HTML exporter from the installed Pi package, so shared sessions keep Pi's normal theme, tree, message, thinking, and tool presentation. An optional, version-checked post-export patch adds one filter to that generated viewer.
 
 ## Requirements
 
@@ -95,6 +95,7 @@ Configuration lives at `~/.pi/agent/pi-share-slice.json`. The path follows Pi's 
     "reasoning": false,
     "tool": false,
     "context": false,
+    "patchViewer": true,
     "systemContext": "none",
     "filterMode": "user-assistant-only"
   }
@@ -102,6 +103,14 @@ Configuration lives at `~/.pi/agent/pi-share-slice.json`. The path follows Pi's 
 ```
 
 Invalid fields fall back independently and produce a warning.
+
+### Shared viewer patch
+
+`patchViewer` defaults to `true`. It adds a **User + Assistant** button to Pi's exported viewer and makes that filter active when the shared link opens. Pi's original Default, No-tools, User, Labeled, and All filters remain available.
+
+The patch changes only three exact anchors in Pi's generated HTML: the filter button list, initial filter value, and filter predicate. If a Pi update changes those anchors, sharing stops before upload and tells you how to disable the patch. Set **Patch shared viewer** to `false` in `/share-slice-settings` to use Pi's unmodified viewer.
+
+Viewer filters operate on session entries rather than selector rows. An assistant entry can therefore contain any assistant text, reasoning, or tool calls that you explicitly selected. The patch never restores content omitted from the sliced export.
 
 ### System context modes
 

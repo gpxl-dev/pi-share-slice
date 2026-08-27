@@ -10,6 +10,7 @@ import { exportSlicedSessionToHtml } from "../src/pi-internals.ts";
 import { selectorPageSize, ShareSelector, type ShareSelectionResult } from "../src/share-selector.ts";
 import { collectLabels, createSlicedSessionData, deriveShareRows, writeSlicedSessionJsonl } from "../src/slice.ts";
 import { buildPresentationState } from "../src/system-context.ts";
+import { patchPiViewerFile } from "../src/viewer-patch.ts";
 
 async function selectSlice(
   ctx: ExtensionCommandContext,
@@ -136,6 +137,7 @@ async function shareSlice(pi: ExtensionAPI, ctx: ExtensionCommandContext): Promi
       theme: ctx.ui.theme,
       presentation,
     });
+    if (loaded.config.defaults.patchViewer) patchPiViewerFile(htmlPath);
 
     const upload = await uploadWithLoader(pi, ctx, htmlPath);
     if (upload.cancelled) {
@@ -172,6 +174,7 @@ async function openSettings(ctx: ExtensionCommandContext): Promise<void> {
     { id: "reasoning", label: "Select assistant reasoning", currentValue: String(config.defaults.reasoning), values: ["true", "false"] },
     { id: "tool", label: "Select tool bundles", currentValue: String(config.defaults.tool), values: ["true", "false"] },
     { id: "context", label: "Select context rows", currentValue: String(config.defaults.context), values: ["true", "false"] },
+    { id: "patchViewer", label: "Patch shared viewer", currentValue: String(config.defaults.patchViewer), values: ["true", "false"] },
     { id: "systemContext", label: "System context", currentValue: config.defaults.systemContext, values: [...SYSTEM_MODES] },
     { id: "filterMode", label: "Initial filter", currentValue: config.defaults.filterMode, values: [...FILTER_MODES] },
   ];
@@ -186,7 +189,7 @@ async function openSettings(ctx: ExtensionCommandContext): Promise<void> {
       (id, value) => {
         if (id === "systemContext") config.defaults.systemContext = value as typeof config.defaults.systemContext;
         else if (id === "filterMode") config.defaults.filterMode = value as typeof config.defaults.filterMode;
-        else config.defaults[id as "user" | "assistant" | "reasoning" | "tool" | "context"] = value === "true";
+        else config.defaults[id as "user" | "assistant" | "reasoning" | "tool" | "context" | "patchViewer"] = value === "true";
         try {
           saveConfig(config);
         } catch (error) {

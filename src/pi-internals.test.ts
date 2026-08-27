@@ -6,6 +6,7 @@ import type { SessionEntry, SessionHeader, Theme } from "@earendil-works/pi-codi
 import { DEFAULT_CONFIG } from "./config.ts";
 import { exportSlicedSessionToHtml, loadPiInternals, PiCompatibilityError, type PiInternalModules } from "./pi-internals.ts";
 import { createSlicedSessionData, deriveShareRows, writeSlicedSessionJsonl } from "./slice.ts";
+import { patchPiViewerFile } from "./viewer-patch.ts";
 
 const header = {
   type: "session", version: 3, id: "HTML_OMIT_HEADER_ID", timestamp: "2026-01-01T00:00:00.000Z",
@@ -88,11 +89,14 @@ describe("Pi internal compatibility adapter", () => {
         theme: { name: "dark" } as Theme,
         presentation: {},
       });
+      patchPiViewerFile(htmlPath);
       const html = readFileSync(htmlPath, "utf8");
       const embedded = JSON.stringify(decodeEmbeddedSession(html));
 
       expect(html).toContain('<div id="sidebar-overlay"></div>');
       expect(html).toContain("--accent:");
+      expect(html).toContain('data-filter="user-assistant-only" data-pi-share-slice-patch="1"');
+      expect(html).toContain("let filterMode = 'user-assistant-only';");
       expect(embedded).toContain("HTML_KEEP_USER");
       expect(embedded).toContain("HTML_KEEP_ASSISTANT");
       expect(embedded).not.toContain("HTML_OMIT_USER");
