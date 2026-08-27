@@ -99,6 +99,10 @@ describe("Pi internal compatibility adapter", () => {
 
       expect(html).toContain('<div id="sidebar-overlay"></div>');
       expect(html).toContain("--accent:");
+      expect(html).toContain("color-scheme: light dark");
+      expect(html).toContain("@media (prefers-color-scheme: dark)");
+      expect(html).toContain("--body-bg: #1a1b26");
+      expect(html).toContain("--syntaxKeyword: #bb9af7");
       expect(html).toContain('data-filter="user-assistant-only" data-pi-share-slice-patch="1"');
       expect(html).toContain("let filterMode = 'user-assistant-only';");
       expect(html).toContain("#sidebar, #sidebar-resizer, #hamburger, #sidebar-overlay { display: none !important; }");

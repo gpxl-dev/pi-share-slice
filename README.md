@@ -2,7 +2,7 @@
 
 `pi-share-slice` is a dependency-free runtime extension for [Pi](https://pi.dev). It lets you select part of the active conversation branch and share it as a secret GitHub Gist through Pi's built-in HTML session viewer.
 
-The extension does **not** convert sessions to Markdown or ship a copy of Pi's viewer. It calls the HTML exporter from the installed Pi package, so shared sessions keep Pi's normal theme, tree, message, thinking, and tool presentation. An optional, version-checked post-export patch adds one filter to that generated viewer.
+The extension does **not** convert sessions to Markdown or ship a copy of Pi's viewer. It calls the HTML exporter from the installed Pi package, so shared sessions keep Pi's tree, message, thinking, and tool presentation. An optional, version-checked post-export patch adds one filter and a system-following viewer theme.
 
 ## Requirements
 
@@ -111,6 +111,8 @@ Invalid fields fall back independently and produce a warning.
 
 `patchViewer` defaults to `true`. It adds a **User + Assistant** button to Pi's exported viewer and makes that filter active when the shared link opens. Pi's original Default, No-tools, User, Labeled, and All filters remain available.
 
+The patch also follows the browser's system color preference. Light mode uses Pi's light palette. Dark mode uses a Tokyo Night palette for the viewer, message cards, controls, Markdown, diffs, and syntax highlighting. Changes to the system preference apply while the page is open.
+
 Three independent options default to `false`:
 
 - `hideViewerSidebar`: hide the session tree, resizer, overlay, and mobile sidebar button. The linear sliced conversation remains in the main pane.
@@ -153,7 +155,7 @@ This adapter may need an update after Pi changes its internal file layout or fun
 
 The adapter can load Pi's built-in tool definitions for HTML rendering. Pi's public extension API does not expose renderer functions owned by other extensions, so selected custom tools may use Pi's generic HTML fallback instead of their custom TUI renderer.
 
-Alternative share backends and expiry, share history/deletion, and extension-specific theme customization are deferred to later tranches.
+Alternative share backends and expiry, share history/deletion, and selectable viewer themes are deferred to later tranches.
 
 ## Development
 

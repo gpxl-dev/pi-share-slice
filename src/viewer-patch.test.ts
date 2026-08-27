@@ -63,6 +63,18 @@ describe("Pi viewer patch", () => {
     expect(patched).toContain("Messages:");
   });
 
+  test("adds a system-following light and Tokyo Night theme", () => {
+    const patched = patchPiViewerHtml(compatibleViewer);
+
+    expect(patched).toContain("color-scheme: light dark");
+    expect(patched).toContain("@media (prefers-color-scheme: dark)");
+    expect(patched).toContain("--body-bg: #f8f8f8");
+    expect(patched).toContain("--body-bg: #1a1b26");
+    expect(patched).toContain("--container-bg: #24283b");
+    expect(patched).toContain("--accent: #7dcfff");
+    expect(patched).toContain("--syntaxKeyword: #bb9af7");
+  });
+
   test("optionally hides the sidebar and toggles and keeps only date and model summary rows", () => {
     const patched = patchPiViewerHtml(compatibleViewer, {
       hideSidebar: true,
