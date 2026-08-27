@@ -30,8 +30,14 @@ describe("share slice config", () => {
     expect(parsed.config.defaults.assistant).toBeTrue();
     expect(parsed.config.defaults.reasoning).toBeTrue();
     expect(parsed.config.defaults.systemContext).toBe("none");
-    expect(parsed.config.defaults.filterMode).toBe("default");
+    expect(parsed.config.defaults.filterMode).toBe("user-assistant-only");
     expect(parsed.warnings).toHaveLength(3);
+  });
+
+  test("accepts the user-and-assistant-only filter", () => {
+    const parsed = parseConfig({ defaults: { filterMode: "user-assistant-only" } });
+    expect(parsed.config.defaults.filterMode).toBe("user-assistant-only");
+    expect(parsed.warnings).toEqual([]);
   });
 
   test("malformed JSON warns and save writes valid global config", () => {

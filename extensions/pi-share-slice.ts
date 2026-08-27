@@ -4,7 +4,7 @@ import { join } from "node:path";
 import type { ExtensionAPI, ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 import { BorderedLoader, getSettingsListTheme } from "@earendil-works/pi-coding-agent";
 import { Container, hyperlink, type SettingItem, SettingsList, Text } from "@earendil-works/pi-tui";
-import { loadConfig, saveConfig, type ShareSliceConfig } from "../src/config.ts";
+import { FILTER_MODES, loadConfig, saveConfig, SYSTEM_MODES, type ShareSliceConfig } from "../src/config.ts";
 import { createPrivateGist, GistShareError, type GistShareResult } from "../src/gist.ts";
 import { exportSlicedSessionToHtml } from "../src/pi-internals.ts";
 import { selectorPageSize, ShareSelector, type ShareSelectionResult } from "../src/share-selector.ts";
@@ -172,8 +172,8 @@ async function openSettings(ctx: ExtensionCommandContext): Promise<void> {
     { id: "reasoning", label: "Select assistant reasoning", currentValue: String(config.defaults.reasoning), values: ["true", "false"] },
     { id: "tool", label: "Select tool bundles", currentValue: String(config.defaults.tool), values: ["true", "false"] },
     { id: "context", label: "Select context rows", currentValue: String(config.defaults.context), values: ["true", "false"] },
-    { id: "systemContext", label: "System context", currentValue: config.defaults.systemContext, values: ["none", "without-tools", "with-tools"] },
-    { id: "filterMode", label: "Initial filter", currentValue: config.defaults.filterMode, values: ["default", "no-tools", "user-only", "labeled-only", "all"] },
+    { id: "systemContext", label: "System context", currentValue: config.defaults.systemContext, values: [...SYSTEM_MODES] },
+    { id: "filterMode", label: "Initial filter", currentValue: config.defaults.filterMode, values: [...FILTER_MODES] },
   ];
 
   await ctx.ui.custom<void>((tui, theme, _keybindings, done) => {

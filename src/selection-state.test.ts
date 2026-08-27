@@ -39,7 +39,8 @@ describe("selection state", () => {
   });
 
   test("tree filter modes apply to the view only", () => {
-    const state = new SelectionState(rows, { filterMode: "default", systemMode: "none" });
+    const state = new SelectionState(rows, { filterMode: "user-assistant-only", systemMode: "none" });
+    expect(state.visibleRows.map((item) => item.category)).toEqual(["user", "assistant"]);
     state.setFilterMode("no-tools");
     expect(state.visibleRows.some((item) => item.category === "tool")).toBeFalse();
     state.setFilterMode("user-only");
@@ -48,6 +49,16 @@ describe("selection state", () => {
     expect(state.visibleRows.map((item) => item.id)).toEqual(["row-4"]);
     state.setFilterMode("all");
     expect(state.visibleRows).toHaveLength(6);
+  });
+
+  test("cycles through the user-and-assistant-only filter in both directions", () => {
+    const state = new SelectionState(rows, { filterMode: "user-assistant-only", systemMode: "none" });
+    state.cycleFilter();
+    expect(state.filterMode).toBe("default");
+    state.cycleFilter(-1);
+    expect(state.filterMode).toBe("user-assistant-only");
+    state.cycleFilter(-1);
+    expect(state.filterMode).toBe("all");
   });
 
   test("visual ranges add inclusively and support half-page/end movement", () => {

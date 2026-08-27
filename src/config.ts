@@ -5,7 +5,7 @@ import { getAgentDir } from "@earendil-works/pi-coding-agent";
 export const SYSTEM_MODES = ["none", "without-tools", "with-tools"] as const;
 export type SystemMode = (typeof SYSTEM_MODES)[number];
 
-export const FILTER_MODES = ["default", "no-tools", "user-only", "labeled-only", "all"] as const;
+export const FILTER_MODES = ["user-assistant-only", "default", "no-tools", "user-only", "labeled-only", "all"] as const;
 export type FilterMode = (typeof FILTER_MODES)[number];
 
 export const ROW_CATEGORIES = ["user", "assistant", "reasoning", "tool", "context"] as const;
@@ -33,7 +33,7 @@ export const DEFAULT_CONFIG: ShareSliceConfig = {
     tool: false,
     context: false,
     systemContext: "none",
-    filterMode: "default",
+    filterMode: "user-assistant-only",
   },
 };
 

@@ -24,6 +24,7 @@ export class SelectionState {
     return this.rows.filter((item) => {
       let passes = false;
       switch (this.filterMode) {
+        case "user-assistant-only": passes = item.category === "user" || item.category === "assistant"; break;
         case "user-only": passes = item.category === "user"; break;
         case "no-tools": passes = item.defaultVisible && !item.toolLike; break;
         case "labeled-only": passes = !!item.label; break;

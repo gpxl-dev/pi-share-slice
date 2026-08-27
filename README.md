@@ -46,7 +46,7 @@ Pi 0.84.3 handles built-in commands before extension command dispatch. An extens
 
 ## Selector
 
-Rows are split into user messages, assistant text, assistant reasoning, and one bundle for each tool call plus its result. User and assistant text rows start selected. Reasoning, tools, context rows, and system context start unselected.
+Rows are split into user messages, assistant text, assistant reasoning, and one bundle for each tool call plus its result. The initial `user-assistant-only` filter shows only user messages and assistant text. Those rows start selected. Reasoning, tools, context rows, and system context start unselected.
 
 Search is a case-insensitive literal substring match. Filtering never clears selections that are hidden from the current view.
 
@@ -81,7 +81,7 @@ The selector also follows Pi's tree filter bindings:
 | `Ctrl+A` | All rows |
 | `Ctrl+O` / `Ctrl+Shift+O` | Cycle forward / backward |
 
-`Ctrl+D` performs its visual-mode movement before the default-filter binding.
+`user-assistant-only` has no dedicated Pi tree binding. It is the initial filter and is available through filter cycling or `/share-slice-settings`. `Ctrl+D` switches to Pi's broader default filter and performs its visual-mode movement first when visual mode is active.
 
 ## Global configuration
 
@@ -96,7 +96,7 @@ Configuration lives at `~/.pi/agent/pi-share-slice.json`. The path follows Pi's 
     "tool": false,
     "context": false,
     "systemContext": "none",
-    "filterMode": "default"
+    "filterMode": "user-assistant-only"
   }
 }
 ```
