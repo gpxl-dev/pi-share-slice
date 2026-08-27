@@ -1,0 +1,8 @@
+node_modules/
+.pi-subagents/
+coverage/
+*.html
+*.jsonl
+.DS_Store
+.idea/
+.vscode/
