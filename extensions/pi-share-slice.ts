@@ -137,7 +137,13 @@ async function shareSlice(pi: ExtensionAPI, ctx: ExtensionCommandContext): Promi
       theme: ctx.ui.theme,
       presentation,
     });
-    if (loaded.config.defaults.patchViewer) patchPiViewerFile(htmlPath);
+    if (loaded.config.defaults.patchViewer) {
+      patchPiViewerFile(htmlPath, {
+        hideSidebar: loaded.config.defaults.hideViewerSidebar,
+        hideHeaderToggles: loaded.config.defaults.hideViewerToggles,
+        condenseSummary: loaded.config.defaults.condenseViewerSummary,
+      });
+    }
 
     const upload = await uploadWithLoader(pi, ctx, htmlPath);
     if (upload.cancelled) {
@@ -175,6 +181,9 @@ async function openSettings(ctx: ExtensionCommandContext): Promise<void> {
     { id: "tool", label: "Select tool bundles", currentValue: String(config.defaults.tool), values: ["true", "false"] },
     { id: "context", label: "Select context rows", currentValue: String(config.defaults.context), values: ["true", "false"] },
     { id: "patchViewer", label: "Patch shared viewer", currentValue: String(config.defaults.patchViewer), values: ["true", "false"] },
+    { id: "hideViewerSidebar", label: "Hide viewer sidebar", currentValue: String(config.defaults.hideViewerSidebar), values: ["true", "false"] },
+    { id: "hideViewerToggles", label: "Hide viewer toggle buttons", currentValue: String(config.defaults.hideViewerToggles), values: ["true", "false"] },
+    { id: "condenseViewerSummary", label: "Condense viewer summary", currentValue: String(config.defaults.condenseViewerSummary), values: ["true", "false"] },
     { id: "systemContext", label: "System context", currentValue: config.defaults.systemContext, values: [...SYSTEM_MODES] },
     { id: "filterMode", label: "Initial filter", currentValue: config.defaults.filterMode, values: [...FILTER_MODES] },
   ];
@@ -189,7 +198,17 @@ async function openSettings(ctx: ExtensionCommandContext): Promise<void> {
       (id, value) => {
         if (id === "systemContext") config.defaults.systemContext = value as typeof config.defaults.systemContext;
         else if (id === "filterMode") config.defaults.filterMode = value as typeof config.defaults.filterMode;
-        else config.defaults[id as "user" | "assistant" | "reasoning" | "tool" | "context" | "patchViewer"] = value === "true";
+        else config.defaults[id as
+          | "user"
+          | "assistant"
+          | "reasoning"
+          | "tool"
+          | "context"
+          | "patchViewer"
+          | "hideViewerSidebar"
+          | "hideViewerToggles"
+          | "condenseViewerSummary"
+        ] = value === "true";
         try {
           saveConfig(config);
         } catch (error) {

@@ -23,6 +23,9 @@ describe("share slice config", () => {
         assistant: "yes",
         reasoning: true,
         patchViewer: "yes",
+        hideViewerSidebar: "yes",
+        hideViewerToggles: 1,
+        condenseViewerSummary: null,
         systemContext: "everything",
         filterMode: "wat",
       },
@@ -31,15 +34,29 @@ describe("share slice config", () => {
     expect(parsed.config.defaults.assistant).toBeTrue();
     expect(parsed.config.defaults.reasoning).toBeTrue();
     expect(parsed.config.defaults.patchViewer).toBeTrue();
+    expect(parsed.config.defaults.hideViewerSidebar).toBeFalse();
+    expect(parsed.config.defaults.hideViewerToggles).toBeFalse();
+    expect(parsed.config.defaults.condenseViewerSummary).toBeFalse();
     expect(parsed.config.defaults.systemContext).toBe("none");
     expect(parsed.config.defaults.filterMode).toBe("user-assistant-only");
-    expect(parsed.warnings).toHaveLength(4);
+    expect(parsed.warnings).toHaveLength(7);
   });
 
-  test("accepts the user-and-assistant-only filter and disabled viewer patch", () => {
-    const parsed = parseConfig({ defaults: { filterMode: "user-assistant-only", patchViewer: false } });
+  test("accepts viewer customization options", () => {
+    const parsed = parseConfig({
+      defaults: {
+        filterMode: "user-assistant-only",
+        patchViewer: false,
+        hideViewerSidebar: true,
+        hideViewerToggles: true,
+        condenseViewerSummary: true,
+      },
+    });
     expect(parsed.config.defaults.filterMode).toBe("user-assistant-only");
     expect(parsed.config.defaults.patchViewer).toBeFalse();
+    expect(parsed.config.defaults.hideViewerSidebar).toBeTrue();
+    expect(parsed.config.defaults.hideViewerToggles).toBeTrue();
+    expect(parsed.config.defaults.condenseViewerSummary).toBeTrue();
     expect(parsed.warnings).toEqual([]);
   });
 

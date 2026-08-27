@@ -89,7 +89,11 @@ describe("Pi internal compatibility adapter", () => {
         theme: { name: "dark" } as Theme,
         presentation: {},
       });
-      patchPiViewerFile(htmlPath);
+      patchPiViewerFile(htmlPath, {
+        hideSidebar: true,
+        hideHeaderToggles: true,
+        condenseSummary: true,
+      });
       const html = readFileSync(htmlPath, "utf8");
       const embedded = JSON.stringify(decodeEmbeddedSession(html));
 
@@ -97,6 +101,12 @@ describe("Pi internal compatibility adapter", () => {
       expect(html).toContain("--accent:");
       expect(html).toContain('data-filter="user-assistant-only" data-pi-share-slice-patch="1"');
       expect(html).toContain("let filterMode = 'user-assistant-only';");
+      expect(html).toContain("#sidebar, #sidebar-resizer, #hamburger, #sidebar-overlay { display: none !important; }");
+      expect(html).not.toContain('class="header-toggle-btn"');
+      expect(html).not.toContain("<h1>Session:");
+      expect(html).toContain("Date:");
+      expect(html).toContain("Models:");
+      expect(html).not.toContain("Messages:");
       expect(embedded).toContain("HTML_KEEP_USER");
       expect(embedded).toContain("HTML_KEEP_ASSISTANT");
       expect(embedded).not.toContain("HTML_OMIT_USER");

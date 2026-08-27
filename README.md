@@ -96,6 +96,9 @@ Configuration lives at `~/.pi/agent/pi-share-slice.json`. The path follows Pi's 
     "tool": false,
     "context": false,
     "patchViewer": true,
+    "hideViewerSidebar": false,
+    "hideViewerToggles": false,
+    "condenseViewerSummary": false,
     "systemContext": "none",
     "filterMode": "user-assistant-only"
   }
@@ -108,7 +111,15 @@ Invalid fields fall back independently and produce a warning.
 
 `patchViewer` defaults to `true`. It adds a **User + Assistant** button to Pi's exported viewer and makes that filter active when the shared link opens. Pi's original Default, No-tools, User, Labeled, and All filters remain available.
 
-The patch changes only three exact anchors in Pi's generated HTML: the filter button list, initial filter value, and filter predicate. If a Pi update changes those anchors, sharing stops before upload and tells you how to disable the patch. Set **Patch shared viewer** to `false` in `/share-slice-settings` to use Pi's unmodified viewer.
+Three independent options default to `false`:
+
+- `hideViewerSidebar`: hide the session tree, resizer, overlay, and mobile sidebar button. The linear sliced conversation remains in the main pane.
+- `hideViewerToggles`: remove the thinking/tool help text and buttons. The JSONL download button remains available, and Pi's `T` and `O` keyboard shortcuts still work.
+- `condenseViewerSummary`: remove the session ID, message count, tool-call count, token count, and cost. The summary keeps only Date and Models.
+
+Change these options through `/share-slice-settings` or the JSON file. They apply only when `patchViewer` is `true`.
+
+Each enabled customization checks exact anchors in Pi's generated HTML. If a Pi update changes an anchor, sharing stops before upload and tells you how to disable the patch. Set **Patch shared viewer** to `false` in `/share-slice-settings` to use Pi's unmodified viewer.
 
 Viewer filters operate on session entries rather than selector rows. An assistant entry can therefore contain any assistant text, reasoning, or tool calls that you explicitly selected. The patch never restores content omitted from the sliced export.
 

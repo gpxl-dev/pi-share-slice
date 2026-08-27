@@ -18,6 +18,9 @@ export interface ShareSliceDefaults {
   tool: boolean;
   context: boolean;
   patchViewer: boolean;
+  hideViewerSidebar: boolean;
+  hideViewerToggles: boolean;
+  condenseViewerSummary: boolean;
   systemContext: SystemMode;
   filterMode: FilterMode;
 }
@@ -34,6 +37,9 @@ export const DEFAULT_CONFIG: ShareSliceConfig = {
     tool: false,
     context: false,
     patchViewer: true,
+    hideViewerSidebar: false,
+    hideViewerToggles: false,
+    condenseViewerSummary: false,
     systemContext: "none",
     filterMode: "user-assistant-only",
   },
@@ -75,10 +81,16 @@ export function parseConfig(value: unknown): { config: ShareSliceConfig; warning
     else warnings.push(`defaults.${category} must be true or false; using ${String(defaults[category])}.`);
   }
 
-  const patchViewer = record.patchViewer;
-  if (patchViewer !== undefined) {
-    if (typeof patchViewer === "boolean") defaults.patchViewer = patchViewer;
-    else warnings.push(`defaults.patchViewer must be true or false; using ${String(defaults.patchViewer)}.`);
+  for (const option of [
+    "patchViewer",
+    "hideViewerSidebar",
+    "hideViewerToggles",
+    "condenseViewerSummary",
+  ] as const) {
+    const raw = record[option];
+    if (raw === undefined) continue;
+    if (typeof raw === "boolean") defaults[option] = raw;
+    else warnings.push(`defaults.${option} must be true or false; using ${String(defaults[option])}.`);
   }
 
   const systemContext = record.systemContext;
