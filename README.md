@@ -29,7 +29,13 @@ For development, load it for one run:
 pi -e /path/to/pi-share-slice
 ```
 
-After the repository is published, it can be installed as a Git Pi package:
+Install from npm with:
+
+```bash
+pi install npm:pi-share-slice
+```
+
+You can also install it directly from GitHub:
 
 ```bash
 pi install git:https://github.com/gpxl-dev/pi-share-slice

@@ -4,6 +4,17 @@
   "description": "Select and share slices of Pi sessions with Pi's built-in HTML viewer",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gpxl-dev/pi-share-slice.git"
+  },
+  "homepage": "https://github.com/gpxl-dev/pi-share-slice#readme",
+  "bugs": {
+    "url": "https://github.com/gpxl-dev/pi-share-slice/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [
     "pi-package",
     "pi",
@@ -41,7 +52,7 @@
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "0.84.3",
     "@earendil-works/pi-tui": "0.84.3",
-    "@types/bun": "latest",
+    "@types/bun": "1.4.0",
     "@types/node": "^22.19.0",
     "typescript": "^5.9.3"
   },
