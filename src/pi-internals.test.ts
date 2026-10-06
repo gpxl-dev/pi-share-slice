@@ -107,10 +107,13 @@ describe("Pi internal compatibility adapter", () => {
       expect(html).toContain("let filterMode = 'user-assistant-only';");
       expect(html).toContain("#sidebar, #sidebar-resizer, #hamburger, #sidebar-overlay { display: none !important; }");
       expect(html).not.toContain('class="header-toggle-btn"');
+      expect(html).not.toContain('class="help-hint"');
+      expect(html).toContain('class="download-json-btn"');
       expect(html).not.toContain("<h1>Session:");
       expect(html).toContain("Date:");
       expect(html).toContain("Models:");
       expect(html).not.toContain("Messages:");
+      expect(html).not.toContain("Cost:</span>");
       expect(embedded).toContain("HTML_KEEP_USER");
       expect(embedded).toContain("HTML_KEEP_ASSISTANT");
       expect(embedded).not.toContain("HTML_OMIT_USER");

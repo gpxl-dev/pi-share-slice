@@ -45,6 +45,15 @@ function renderHeader() {
 </body>
 </html>`;
 
+// Pi 1.0.4 adds hidden-message controls, pressed states, and a currency prefix.
+const currentViewer = compatibleViewer
+  .replace('O toggle tools</span>', 'O toggle tools · H toggle hidden messages</span>')
+  .replace('data-action="toggle-thinking"', 'data-action="toggle-thinking" aria-pressed="${thinkingExpanded}"')
+  .replace('data-action="toggle-tools"', 'data-action="toggle-tools" aria-pressed="${toolOutputsExpanded}"')
+  .replace('<button type="button" class="download-json-btn">',
+    '<button type="button" class="header-toggle-btn" data-action="toggle-hidden-messages" aria-pressed="${showHiddenMessages}" title="Show custom messages marked as hidden in the terminal (H).">${showHiddenMessages ? \'Hide hidden messages\' : \'Show hidden messages\'}</button>\n<button type="button" class="download-json-btn">')
+  .replace('${totalCost.toFixed(3)}', () => '$${totalCost.toFixed(3)}');
+
 describe("Pi viewer patch", () => {
   test("adds and activates a user-and-assistant filter without removing Pi's filters", () => {
     const patched = patchPiViewerHtml(compatibleViewer);
@@ -75,8 +84,11 @@ describe("Pi viewer patch", () => {
     expect(patched).toContain("--syntaxKeyword: #bb9af7");
   });
 
-  test("optionally hides the sidebar and toggles and keeps only date and model summary rows", () => {
-    const patched = patchPiViewerHtml(compatibleViewer, {
+  test.each([
+    ["0.84.3", compatibleViewer],
+    ["1.0.4", currentViewer],
+  ] as const)("optionally hides the sidebar and toggles and condenses the summary on Pi %s", (_version, viewer) => {
+    const patched = patchPiViewerHtml(viewer, {
       hideSidebar: true,
       hideHeaderToggles: true,
       condenseSummary: true,
@@ -106,6 +118,33 @@ describe("Pi viewer patch", () => {
     const withoutSidebar = compatibleViewer.replace('<aside id="sidebar">', '<aside id="tree">');
     expect(() => patchPiViewerHtml(withoutSidebar)).not.toThrow();
     expect(() => patchPiViewerHtml(withoutSidebar, { hideSidebar: true })).toThrow("sidebar anchor");
+  });
+
+  test("keeps current header controls and cost when customizations are disabled", () => {
+    const patched = patchPiViewerHtml(currentViewer);
+    expect(patched).toContain('data-action="toggle-hidden-messages"');
+    expect(patched).toContain('aria-pressed="${thinkingExpanded}"');
+    expect(patched).toContain('$${totalCost.toFixed(3)}');
+  });
+
+  test("rejects missing, duplicate, and unknown header variants", () => {
+    const options = { hideHeaderToggles: true };
+    expect(() => patchPiViewerHtml(currentViewer.replace('class="help-hint"', 'class="new-hint"'), options))
+      .toThrow("header toggle hint");
+    expect(() => patchPiViewerHtml(currentViewer.replace('data-action="toggle-hidden-messages"', 'data-action="hidden"'), options))
+      .toThrow("hidden messages toggle button");
+    expect(() => patchPiViewerHtml(currentViewer.replace('aria-pressed="${thinkingExpanded}"', 'aria-pressed="true"'), options))
+      .toThrow("thinking toggle button");
+    expect(() => patchPiViewerHtml(currentViewer + '<span class="help-hint">T toggle thinking · O toggle tools</span>', options))
+      .toThrow("header toggle hint");
+    const thinkingButton = compatibleViewer.match(/<button[^\n]+data-action="toggle-thinking"[^\n]+/u)![0];
+    expect(() => patchPiViewerHtml(currentViewer + thinkingButton, options)).toThrow("thinking toggle button");
+    expect(() => patchPiViewerHtml(compatibleViewer + thinkingButton, options)).toThrow("thinking toggle button");
+  });
+
+  test("rejects duplicate cost variants", () => {
+    const legacyCost = compatibleViewer.split("\n").find((line) => line.includes("Cost:</span>"))!;
+    expect(() => patchPiViewerHtml(currentViewer + legacyCost, { condenseSummary: true })).toThrow("summary detail 4");
   });
 
   test("rejects an accidental second patch", () => {

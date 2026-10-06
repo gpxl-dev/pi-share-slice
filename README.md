@@ -6,7 +6,7 @@ The extension does **not** convert sessions to Markdown or ship a copy of Pi's v
 
 ## Requirements
 
-- Pi with file-based package internals. The initial tested version is `@earendil-works/pi-coding-agent` 0.84.3.
+- Pi with file-based package internals. Tested with `@earendil-works/pi-coding-agent` 0.84.3 and 1.0.4.
 - [GitHub CLI](https://cli.github.com/) installed and authenticated:
 
   ```bash

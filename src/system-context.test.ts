@@ -45,7 +45,7 @@ describe("system context presentation", () => {
 
   test("installed builder produces a no-tools prompt without snippets or tool guidelines", async () => {
     const result = await buildPresentationState("without-tools", context, tools, await loadPiInternals());
-    expect(result.systemPrompt).toContain("Available tools:\n(none)");
+    expect(result.systemPrompt).toMatch(/(?:Available tools:|<tools>)\n\(none\)/);
     expect(result.systemPrompt).not.toContain("Read files");
     expect(result.systemPrompt).not.toContain("Use read carefully");
     expect(result.systemPrompt).toContain("Keep this context");

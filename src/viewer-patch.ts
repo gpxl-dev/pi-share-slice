@@ -144,6 +144,10 @@ const SYSTEM_THEME_CSS = `
 `;
 
 const HELP_HINT = '<span class="help-hint">T toggle thinking · O toggle tools</span>';
+const HIDDEN_MESSAGES_HELP_HINT =
+  '<span class="help-hint">T toggle thinking · O toggle tools · H toggle hidden messages</span>';
+const HIDDEN_MESSAGES_TOGGLE =
+  '<button type="button" class="header-toggle-btn" data-action="toggle-hidden-messages" aria-pressed="${showHiddenMessages}" title="Show custom messages marked as hidden in the terminal (H).">${showHiddenMessages ? \'Hide hidden messages\' : \'Show hidden messages\'}</button>';
 const THINKING_TOGGLE =
   '<button type="button" class="header-toggle-btn" data-action="toggle-thinking" title="Toggle thinking (T)">Toggle thinking</button>';
 const TOOLS_TOGGLE =
@@ -200,6 +204,16 @@ function replaceUnique(html: string, search: string, replacement: string, part: 
   return html.replace(search, replacement);
 }
 
+function replaceUniqueVariant(html: string, variants: readonly string[], replacement: string, part: string): string {
+  const count = variants.reduce((total, variant) => total + occurrenceCount(html, variant), 0);
+  if (count !== 1) throw new ViewerPatchError(part);
+  return replaceUnique(html, variants.find((variant) => html.includes(variant))!, replacement, part);
+}
+
+function withPressedState(button: string, state: string): string {
+  return button.replace(' title=', ` aria-pressed="\${${state}}" title=`);
+}
+
 /**
  * Apply narrow, version-checked changes to Pi's generated viewer.
  *
@@ -253,15 +267,26 @@ ${STYLE_END}`,
   }
 
   if (options.hideHeaderToggles) {
-    patched = replaceUnique(patched, HELP_HINT, "", "header toggle hint");
-    patched = replaceUnique(patched, THINKING_TOGGLE, "", "thinking toggle button");
-    patched = replaceUnique(patched, TOOLS_TOGGLE, "", "tools toggle button");
+    const hasHiddenMessagesToggle = patched.includes(HIDDEN_MESSAGES_HELP_HINT);
+    patched = replaceUniqueVariant(patched, [HELP_HINT, HIDDEN_MESSAGES_HELP_HINT], "", "header toggle hint");
+    patched = replaceUniqueVariant(
+      patched, [THINKING_TOGGLE, withPressedState(THINKING_TOGGLE, "thinkingExpanded")], "", "thinking toggle button",
+    );
+    patched = replaceUniqueVariant(
+      patched, [TOOLS_TOGGLE, withPressedState(TOOLS_TOGGLE, "toolOutputsExpanded")], "", "tools toggle button",
+    );
+    if (hasHiddenMessagesToggle) {
+      patched = replaceUnique(patched, HIDDEN_MESSAGES_TOGGLE, "", "hidden messages toggle button");
+    }
   }
 
   if (options.condenseSummary) {
     patched = replaceUnique(patched, SESSION_HEADING, "", "session heading");
     for (const [index, item] of SUMMARY_DETAIL_ITEMS.entries()) {
-      patched = replaceUnique(patched, item, "", `summary detail ${index + 1}`);
+      const variants = item.includes("${totalCost.toFixed(3)}")
+        ? [item, item.replace("${totalCost.toFixed(3)}", () => "$${totalCost.toFixed(3)}")]
+        : [item];
+      patched = replaceUniqueVariant(patched, variants, "", `summary detail ${index + 1}`);
     }
   }
 
